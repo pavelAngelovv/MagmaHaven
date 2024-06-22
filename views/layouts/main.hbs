@@ -10,17 +10,26 @@
 </head>
 
 <body>
+    {{#if errors}}
+    <div>
+        <div class="errorContainer">
+            {{#each errors}}
+            <p>{{this}}</p>
+            {{/each}}
+        </div>
+    </div>
+    {{/if}}
     <header class="header">
         <nav>
             <img src="./static/images/logo.avif" class="logo">
             <ul>
-                <li><a href="#">Home</a></li>
-                <li><a href="#">Search</a></li>
-                <li><a href="#">All Volcanoes</a></li>
-                <li><a href="#">Create Volcano Wiki</a></li>
-                <li><a href="#">Login</a></li>
-                <li><a href="#">Register</a></li>
-                <li><a href="#">Logout</a></li>
+                <li><a href="/">Home</a></li>
+                <li><a href="/search">Search</a></li>
+                <li><a href="/catalog">All Volcanoes</a></li>
+                <li><a href="/create">Create Volcano Wiki</a></li>
+                <li><a href="/login">Login</a></li>
+                <li><a href="/register">Register</a></li>
+                <li><a href="/logout">Logout</a></li>
             </ul>
         </nav>
     </header>

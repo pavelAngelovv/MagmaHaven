@@ -3,15 +3,21 @@ const bcrypt = require('bcrypt');
 
 const identityName = 'email'
 
-async function register(identity, password) {
-    const existing = await User.findOne({ [identityName]: identity }); 
+async function register(username, email, password) {
+    const existingUsername = await User.findOne({ username }); 
+    const existingEmail = await User.findOne({ email }); 
 
-    if (existing) {
-        throw new Error(`This ${identityName} is already in use`)
+    if (existingUsername) {
+        throw new Error(`Username is already taken`)
+    }
+
+    if (existingEmail) {
+        throw new Error(`This email is already in use`)
     }
 
     const user = new User({
-        [identityName]: identity,
+        username: username,
+        email: email,
         password: await bcrypt.hash(password, 10)
     })
 

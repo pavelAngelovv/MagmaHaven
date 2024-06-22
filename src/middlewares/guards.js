@@ -1,4 +1,4 @@
-function isUser() {
+function isGuest() {
     return function (req, res, next) {
         if (req.user) {
             res.redirect('/')
@@ -8,7 +8,7 @@ function isUser() {
     }
 }
 
-function isGuest() {
+function isUser() {
     return function (req, res, next) {
         if (!req.user) {
             res.redirect('/login')
@@ -19,6 +19,6 @@ function isGuest() {
 }
 
 module.exports = {
+    isGuest,
     isUser,
-    isGuest
 }
