@@ -2,7 +2,7 @@ const { Schema, model, Types } = require('mongoose')
 
 // TODO replace with data model from exam description 
 
-const dataSchema = new Schema({
+const volcanoSchema = new Schema({
     name: {
         type: String,
         required: true,
@@ -43,6 +43,6 @@ const dataSchema = new Schema({
     }
 });
 
-const Data = model('data', dataSchema);
+const Volcano = model('Volcano', volcanoSchema);
 
-module.exports = { Data };
+module.exports = { Volcano };

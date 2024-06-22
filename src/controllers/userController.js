@@ -38,7 +38,7 @@ userRouter.post('/register', isGuest(),
 
             res.redirect('/')
         } catch (err) {
-            res.render('register', { data: { email }, errors: parseError(err).errors });
+            res.render('register', { data: { email, username }, errors: parseError(err).errors });
         }
     });
 userRouter.get('/login', isGuest(), async (req, res) => {
