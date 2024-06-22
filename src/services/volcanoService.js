@@ -34,7 +34,7 @@ async function update(id, data, userId) {
         throw new ReferenceError('Record not found ' + id);
     }
 
-    if (record.author.toString() != userId) {
+    if (record.owner.toString() != userId) {
         throw new Error('Access denied');
     }
 

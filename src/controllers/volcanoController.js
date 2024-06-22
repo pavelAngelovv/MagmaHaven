@@ -40,4 +40,47 @@ stoneRouter.post('/create', isUser(),
         }
     });
 
+stoneRouter.get('/edit/:id', isUser(), async (req, res) => {
+    const stone = await getById(req.params.id);
+
+    if (!stone) {
+        res.render('404');
+        return;
+    };
+
+    const isOwner = req.user._id == stone.owner.toString();
+
+    if (!isOwner) {
+        res.redirect('/login')
+        return;
+    }
+    res.render('edit', { data: stone });
+});
+stoneRouter.post('/edit/:id', isUser(),
+body('name').trim().isLength({ min: 2 }).withMessage('name needs to be at least 2 characters long'),
+body('location').trim().isLength({ min: 3 }).withMessage('location needs to be at least 3 characters long'),
+body('elevation').trim().isNumeric({ min: 0 }).withMessage('elevation needs to be at least 2'),
+body('lastEruption').trim().isNumeric({ min: 0, max: 2024 }).withMessage('last eruption needs to be between 0 and 2024'),
+body('image').trim().isURL({ require_tld: false }).withMessage('image needs to be between 5 and 15 characters long'),
+body('typeVolcano').trim().isIn(['Supervolcanoes', 'Submarine', 'Subglacial', 'Mud', 'Stratovolcanoes', 'Shield']).withMessage('Invalid type of volcano'),
+body('description').trim().isLength({ min: 10 }).withMessage('description needs to be at least 10 characters long'),
+    async (req, res) => {
+        const volcanoId = req.params.id
+        const userId = req.user._id
+        try {
+            const validation = validationResult(req);
+
+            if (validation.errors.length) {
+                throw validation.errors;
+            }
+
+            const result = await update(volcanoId, req.body, userId);
+
+            res.redirect('/catalog/' + volcanoId);
+
+        } catch (err) {
+            res.render('edit', { data: req.body, errors: parseError(err).errors });
+        }
+    });
+
 module.exports = { stoneRouter }
