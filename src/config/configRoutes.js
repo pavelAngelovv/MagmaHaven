@@ -2,11 +2,11 @@
 
 const { homeRouter } = require("../controllers/homeController");
 const { userRouter } = require("../controllers/userController");
-const { stoneRouter } = require("../controllers/volcanoController");
+const { volcanoRouter } = require("../controllers/volcanoController");
 
 function configRoutes(app) {
     app.use(userRouter);
-    app.use(stoneRouter);
+    app.use(volcanoRouter);
     app.use(homeRouter);
     // TODO register routers
 }

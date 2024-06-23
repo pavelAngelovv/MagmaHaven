@@ -25,9 +25,10 @@ homeRouter.get('/catalog/:id', async (req, res) => {
     };
 
     const isOwner = req.user?._id == volcano.owner.toString();
-    // const isLiked = Boolean(stone.likes.find(l => req.user?._id == l.toString()));
+    const isLiked = Boolean(volcano.voteList.find(l => req.user?._id == l.toString()));
+    const votesCount = volcano.voteList.length;
 
-    res.render('details', { volcano, isOwner });
+    res.render('details', { volcano, isOwner, votesCount, isLiked });
 });
 
 

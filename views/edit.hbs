@@ -13,7 +13,10 @@
             <label>Image:</label>
             <input type="text" id="image" name="image" {{#if data.image}}value="{{data.image}}{{/if}}">
             <label>Volcano Type:</label>
-            <select id="type" name="typeVolcano">
+            <select id="type" name="typeVolcano" {{#if data.typeVolcano}}selected="{{data.typeVolcano}}"{{/if}}>
+                {{#if data.typeVolcano}}
+                <option value="{{data.typeVolcano}}" selected hidden>{{data.typeVolcano}}</option>
+                {{/if}}
                 <option value="Supervolcanoes">Supervolcanoes</option>
                 <option value="Submarine" selected>Submarine</option>
                 <option value="Subglacial">Subglacial</option>

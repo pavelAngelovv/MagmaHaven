@@ -1,17 +1,17 @@
 const { Router } = require("express");
-const { create, getById, update, deleteById, likeStone } = require("../services/volcanoService");
+const { create, getById, update, deleteById, likeVolcano } = require("../services/volcanoService");
 const { isUser } = require("../middlewares/guards");
 const { body, validationResult } = require("express-validator");
 const { parseError } = require("../util");
 
 // TODO replace with real router according to exam description
 
-const stoneRouter = Router();
+const volcanoRouter = Router();
 
-stoneRouter.get('/create', isUser(), async (req, res) => {
+volcanoRouter.get('/create', isUser(), async (req, res) => {
     res.render('create');
 });
-stoneRouter.post('/create', isUser(),
+volcanoRouter.post('/create', isUser(),
     body('name').trim().isLength({ min: 2 }).withMessage('name needs to be at least 2 characters long'),
     body('location').trim().isLength({ min: 3 }).withMessage('location needs to be at least 3 characters long'),
     body('elevation').trim().isNumeric({ min: 0 }).withMessage('elevation needs to be at least 2'),
@@ -39,8 +39,7 @@ stoneRouter.post('/create', isUser(),
             res.render('create', { data: req.body, errors: parseError(err).errors });
         }
     });
-
-stoneRouter.get('/edit/:id', isUser(), async (req, res) => {
+volcanoRouter.get('/edit/:id', isUser(), async (req, res) => {
     const stone = await getById(req.params.id);
 
     if (!stone) {
@@ -56,14 +55,14 @@ stoneRouter.get('/edit/:id', isUser(), async (req, res) => {
     }
     res.render('edit', { data: stone });
 });
-stoneRouter.post('/edit/:id', isUser(),
-body('name').trim().isLength({ min: 2 }).withMessage('name needs to be at least 2 characters long'),
-body('location').trim().isLength({ min: 3 }).withMessage('location needs to be at least 3 characters long'),
-body('elevation').trim().isNumeric({ min: 0 }).withMessage('elevation needs to be at least 2'),
-body('lastEruption').trim().isNumeric({ min: 0, max: 2024 }).withMessage('last eruption needs to be between 0 and 2024'),
-body('image').trim().isURL({ require_tld: false }).withMessage('image needs to be between 5 and 15 characters long'),
-body('typeVolcano').trim().isIn(['Supervolcanoes', 'Submarine', 'Subglacial', 'Mud', 'Stratovolcanoes', 'Shield']).withMessage('Invalid type of volcano'),
-body('description').trim().isLength({ min: 10 }).withMessage('description needs to be at least 10 characters long'),
+volcanoRouter.post('/edit/:id', isUser(),
+    body('name').trim().isLength({ min: 2 }).withMessage('name needs to be at least 2 characters long'),
+    body('location').trim().isLength({ min: 3 }).withMessage('location needs to be at least 3 characters long'),
+    body('elevation').trim().isNumeric({ min: 0 }).withMessage('elevation needs to be at least 2'),
+    body('lastEruption').trim().isNumeric({ min: 0, max: 2024 }).withMessage('last eruption needs to be between 0 and 2024'),
+    body('image').trim().isURL({ require_tld: false }).withMessage('image needs to be between 5 and 15 characters long'),
+    body('typeVolcano').trim(),
+    body('description').trim().isLength({ min: 10 }).withMessage('description needs to be at least 10 characters long'),
     async (req, res) => {
         const volcanoId = req.params.id
         const userId = req.user._id
@@ -82,5 +81,29 @@ body('description').trim().isLength({ min: 10 }).withMessage('description needs 
             res.render('edit', { data: req.body, errors: parseError(err).errors });
         }
     });
+volcanoRouter.get('/delete/:id', isUser(), async (req, res) => {
+    const volcanoId = req.params.id
+    const userId = req.user._id
+    try {
+        const result = await deleteById(volcanoId, userId);
 
-module.exports = { stoneRouter }
+        res.redirect('/catalog');
+
+    } catch (err) {
+        console.log(err);
+        res.redirect('catalog' + volcanoId);
+    }
+});
+volcanoRouter.get('/vote/:id', isUser(), async (req, res) => {
+    const volcanoId = req.params.id
+    const userId = req.user._id
+    try {
+        const result = await likeVolcano(volcanoId, userId);
+
+        res.redirect('/catalog/' + volcanoId);
+    } catch (err) {
+        res.render('details', {errors: parseError(err).errors})
+    }
+});
+
+module.exports = { volcanoRouter }

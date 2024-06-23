@@ -59,11 +59,33 @@ async function deleteById(id, userId) {
         throw new ReferenceError('Record not found ' + id);
     }
 
-    if (record.author.toString() != userId) {
+    if (record.owner.toString() != userId) {
         throw new Error('Access denied');
     }
 
     await Volcano.findByIdAndDelete(id);
+}
+
+async function likeVolcano(volcanoId, userId) {
+    const record = await Volcano.findById(volcanoId);
+
+    if (!record) {
+        throw new ReferenceError('Record not found ' + volcanoId);
+    }
+
+    if (record.owner.toString() == userId) {
+        throw new Error('You cannot vote for your own publication!');
+    }
+    
+    if (record.voteList.find(l => l.toString() == userId)) {
+        throw new Error('You have already liked this volcano');
+    }
+
+    record.voteList.push(userId);
+
+    await record.save();
+
+    return record
 }
 
 module.exports = {
@@ -71,6 +93,7 @@ module.exports = {
     getById,
     create,
     update,
-    deleteById
+    deleteById,
+    likeVolcano
 }
 
